@@ -6,21 +6,36 @@ let allKeys = [],
 audio = new Audio("tunes/a.wav");
 
 const playtune = (key) => {
-    audio.src = `tunes/${key}.wav`;
-    audio.play();
+    console.log/(key)
+    const audioCtx = new AudioContext();
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    const finish = audioCtx.destination;
+
+    osc.connect(audioCtx.destination);
+    osc.frequency.value = key;
+    osc.start(0);
 
 
     const clickedKey = document.querySelector(`[data-key="${key}"]`)
     clickedKey.classList.add("active");
     setTimeout(() => {
         clickedKey.classList.remove("active");
+        osc.stop(0);
+
     }, 1050)
 }
 
+
+
+
 pianoKeys.forEach(key => {
     allKeys.push(key.dataset.key);
+    console.log(key.dataset.key);
     key.addEventListener("click", () => playtune(key.dataset.key));
 });
+
+const fhz = {a: 440, w:550}
 
 const handleVolume = (e) => {
     audio.volume = e.target.value;
@@ -31,7 +46,9 @@ const showHideKeys = () => {
 }
 
 const pressedkey = (e) => {
-    if(allKeys.includes(e.key)) playtune(e.key);
+    playtune(fhz[e.key]);
+    if(allKeys.includes(e.key)) playtune(fhz[e.key]);
+
 }
 
 keysCheckbox.addEventListener("click", showHideKeys)
